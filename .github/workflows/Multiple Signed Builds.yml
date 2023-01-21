@@ -1,0 +1,52 @@
+name: Multiple Signed Builds
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - uses: gradle/gradle-build-action@v2.3.3
+      - run: gradle assembleRelease
+
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "33.0.0"
+          
+      - name: Example Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+             repo_token: "${{ secrets.GITHUB_TOKEN }}"
+             automatic_release_tag: "latest"
+             prerelease: true
+             title: "Release X"
+             files: |
+              ${{ steps.sign_app.signedReleaseFile0 }}
+              ${{ steps.sign_app.signedReleaseFile1 }}
+              ${{ steps.sign_app.signedReleaseFile2 }}
+              ${{ steps.sign_app.signedReleaseFile3 }}
+              ${{ steps.sign_app.signedReleaseFile4 }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Signed apks
+          path: app/build/outputs/apk/release/*-arm64-v8a-release-signed.apk
