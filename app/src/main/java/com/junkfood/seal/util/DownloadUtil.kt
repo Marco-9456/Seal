@@ -173,7 +173,7 @@ object DownloadUtil {
                         addOption("--write-subs")
                     }
                 }
-                addOption("--embed-chapters")
+                addOption("--force-keyframes-at-cuts")
             }
         }
 
