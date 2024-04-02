@@ -17,7 +17,7 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - uses: gradle/gradle-build-action@v2.3.3
+      - uses: gradle/gradle-build-action@v2.4.2
       - run: gradle assembleRelease
 
       - uses: ilharp/sign-android-release@v1
