@@ -366,7 +366,7 @@ object DownloadUtil {
         }
 
     private fun YoutubeDLRequest.enableProxy(proxyUrl: String): YoutubeDLRequest =
-        this.addOption("--proxy", proxyUrl)
+        this.addOption("--extractor-args", "youtube:po_token=web.gvs+$proxyUrl")
 
     private fun YoutubeDLRequest.useDownloadArchive(): YoutubeDLRequest =
         this.addOption("--download-archive", context.getArchiveFile().absolutePath)
